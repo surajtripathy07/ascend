@@ -73,6 +73,15 @@ The backend of Ascend is the engine that powers the application, handling data s
 
 By following these instructions, you'll have both the frontend and backend of Ascend up and running, ready to help you manage your tasks and achieve your goals.
 
+### Contributions
+
+Contributions are welcome. 
+
+We already have a list of Issues, please feel free to go through them.
+- Please comment on the issue to ask questions.
+
+If something isn't working, please feel free to create an issue for the same.
+
 ### Additional Information
 
 For any further details or contributions, please reach out to me on tripathy.suraj0704@gmail.com
