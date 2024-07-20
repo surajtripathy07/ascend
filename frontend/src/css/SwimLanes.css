@@ -1,0 +1,40 @@
+/* src/css/SwimLanes.css */
+html, body, #root, .App {
+  height: 100%;
+  margin: 0;
+}
+
+.swimlane-container {
+  display: flex;
+  overflow-x: auto;
+  padding: 16px;
+  width: 100%;
+  height: calc(100vh - 64px); /* Adjust height as needed */
+  box-sizing: border-box; /* Ensure padding is included in the width and height */
+}
+
+.swimlane {
+  flex: 1; /* Make each swimlane take an equal portion of the container */
+  margin: 0 4px;
+  min-width: 250px; /* Set a minimum width to ensure readability */
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: lightgrey;
+  border-radius: 2px;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+.todo-text {
+  flex-grow: 1;
+}
+
+.MuiContainer-root {
+  max-width: 80% !important; /* Adjust to a middle ground value */
+  width: 90%; /* Ensure it scales accordingly */
+  margin: 0 auto; /* Center the container */
+}
