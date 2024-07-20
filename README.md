@@ -75,12 +75,7 @@ By following these instructions, you'll have both the frontend and backend of As
 
 ### Contributions
 
-Contributions are welcome. 
-
-We already have a list of Issues, please feel free to go through them.
-- Please comment on the issue to ask questions.
-
-If something isn't working, please feel free to create an issue for the same.
+Please check [here](CONTRIBUTING.md)
 
 ### Additional Information
 
