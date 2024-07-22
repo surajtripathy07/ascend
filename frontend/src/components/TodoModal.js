@@ -111,7 +111,7 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane }) 
     try {
       const updatedChild = { ...childForMenu, lane, type: lane === 'Today' ? 'todo' : 'goal' };
       await axios.put(`http://localhost:5000/todos/${childForMenu._id}`, updatedChild);
-      setChildren(children.filter(c => c._id !== childForMenu._id));
+      setChildren(children.map(c => (c._id === updatedChild._id ? updatedChild : c)));
       handleMenuClose();
       updateLane(updatedChild); // Update the parent component's state
     } catch (error) {
