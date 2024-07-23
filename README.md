@@ -32,8 +32,7 @@ The frontend of Ascend is designed to provide a user-friendly interface where yo
 ### Example Screenshot
 
 Here's a snapshot of the frontend with dummy values for demonstration purposes:
-
-![WithDummyValues](https://github.com/user-attachments/assets/dd97a563-a49d-4899-b2d3-f333f7e742f6)
+![Screenshot 2024-07-23 at 8 56 54 PM](https://github.com/user-attachments/assets/537922c5-d5c3-4989-a73d-c50bdd066825)
 
 ## Backend
 
