@@ -63,7 +63,15 @@ const SwimLane = ({ lane, items, handleInputChange, handleAddTodo, laneInputs, h
                           onChange={() => handleTodoCompletion(todo)}
                         />
                       }
-                      label={<Typography variant="body1" className="todo-text">{todo.title}</Typography>}
+                      label={
+                        <Typography
+                          variant="body1"
+                          className="todo-text"
+                          style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none' }}
+                        >
+                          {todo.title}
+                        </Typography>
+                      }
                     />
                     <IconButton
                       {...provided.dragHandleProps}

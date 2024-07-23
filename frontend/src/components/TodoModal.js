@@ -164,7 +164,14 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane }) 
                     onChange={() => handleChildCompletion(child)}
                   />
                 }
-                label={<Typography variant="body1">{child.title}</Typography>}
+                label={
+                  <Typography
+                    variant="body1"
+                    style={{ textDecoration: child.isCompleted ? 'line-through' : 'none' }}
+                  >
+                    {child.title}
+                  </Typography>
+                }
                 onDoubleClick={() => handleChildDoubleClick(child)}
               />
               <IconButton onClick={(event) => handleMenuClick(event, child)}>
