@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-import { Paper, Typography, Box, TextField, Button, FormControlLabel, Checkbox, IconButton } from '@mui/material';
+import { Paper, Typography, Box, TextField, FormControlLabel, Checkbox, IconButton } from '@mui/material';
 import TodoModal from './TodoModal';
 import { DragIndicator } from '@mui/icons-material';
 
-const SwimLane = ({ lane, items, handleInputChange, handleAddTodo, laneInputs, handleTodoCompletion, updateTodo }) => {
+const SwimLane = ({ lane, items, handleAddTodoInline, handleTodoCompletion, updateTodo, deleteTodo }) => {
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [newTodo, setNewTodo] = useState('');
 
   const handleTodoDoubleClick = (todo) => {
     setSelectedTodo(todo);
@@ -23,26 +24,22 @@ const SwimLane = ({ lane, items, handleInputChange, handleAddTodo, laneInputs, h
     setSelectedTodo(updatedTodo); // Ensure the modal shows the updated description
   };
 
+  const handleNewTodoChange = (e) => {
+    setNewTodo(e.target.value);
+  };
+
+  const handleNewTodoKeyPress = (e) => {
+    if (e.key === 'Enter' && newTodo.trim()) {
+      handleAddTodoInline(lane, newTodo);
+      setNewTodo('');
+    }
+  };
+
   return (
     <Paper elevation={3} className="swimlane">
       <Typography variant="h6" component="h3">
         {lane}
       </Typography>
-      <TextField
-        label={`Add to ${lane}`}
-        value={laneInputs[lane]}
-        onChange={(e) => handleInputChange(lane, e.target.value)}
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            handleAddTodo(lane);
-          }
-        }}
-        fullWidth
-        margin="normal"
-      />
-      <Button variant="contained" color="primary" onClick={() => handleAddTodo(lane)} fullWidth>
-        Add
-      </Button>
       <Droppable droppableId={lane}>
         {(provided) => (
           <Box ref={provided.innerRef} {...provided.droppableProps} padding={1} minHeight={100}>
@@ -85,6 +82,17 @@ const SwimLane = ({ lane, items, handleInputChange, handleAddTodo, laneInputs, h
               </Draggable>
             ))}
             {provided.placeholder}
+            <Box className="new-todo-input">
+              <TextField
+                value={newTodo}
+                onChange={handleNewTodoChange}
+                onKeyPress={handleNewTodoKeyPress}
+                placeholder={`Add new ${lane} todo...`}
+                fullWidth
+                variant="outlined"
+                size="small"
+              />
+            </Box>
           </Box>
         )}
       </Droppable>
@@ -95,6 +103,7 @@ const SwimLane = ({ lane, items, handleInputChange, handleAddTodo, laneInputs, h
           todo={selectedTodo}
           onSave={handleSave}
           updateLane={updateTodo} // Pass the updateLane function
+          deleteTodo={deleteTodo}
         />
       )}
     </Paper>

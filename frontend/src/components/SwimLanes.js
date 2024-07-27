@@ -1,20 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { TodoContext } from '../context/TodoContext';
-import { Grid, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import axios from 'axios';
 import SwimLane from './SwimLane';
 import '../css/SwimLanes.css';  // Import the new CSS file
 
 const SwimLanes = () => {
   const { state, dispatch } = useContext(TodoContext);
-  const [laneInputs, setLaneInputs] = useState({
-    Today: '',
-    Weekly: '',
-    Quarter: '',
-    Year: '',
-    LifeGoal: ''
-  });
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -61,18 +54,18 @@ const SwimLanes = () => {
     }
   };
 
-  const handleAddTodo = async (lane) => {
-    const newTodo = laneInputs[lane];
-    if (!newTodo.trim()) return;
-
-    const newTodoItem = { title: newTodo, description: '_(Add description here..)', type: lane === 'Today' ? 'todo' : 'goal', isCompleted: false, lane };
+  const handleAddTodo = async (lane, newTodoItem) => {
     try {
       const response = await axios.post('http://localhost:5000/todos', newTodoItem);
       dispatch({ type: 'ADD_TODO', payload: response.data });
-      setLaneInputs({ ...laneInputs, [lane]: '' });
     } catch (error) {
       console.error('Error adding todo:', error);
     }
+  };
+
+  const handleAddTodoInline = (lane, title) => {
+    const newTodoItem = { title, description: '_(Add description here..)', type: lane === 'Today' ? 'todo' : 'goal', isCompleted: false, lane };
+    handleAddTodo(lane, newTodoItem);
   };
 
   const handleTodoCompletion = async (todo) => {
@@ -83,10 +76,6 @@ const SwimLanes = () => {
     } catch (error) {
       console.error('Error updating todo:', error);
     }
-  };
-
-  const handleInputChange = (lane, value) => {
-    setLaneInputs({ ...laneInputs, [lane]: value });
   };
 
   const updateLane = (updatedTodo) => {
@@ -120,9 +109,7 @@ const SwimLanes = () => {
             <SwimLane
               lane={lane}
               items={state.lanes[lane].items}
-              handleInputChange={handleInputChange}
-              handleAddTodo={handleAddTodo}
-              laneInputs={laneInputs}
+              handleAddTodoInline={handleAddTodoInline} // Use handleAddTodoInline for inline addition
               handleTodoCompletion={handleTodoCompletion}
               updateTodo={updateLane}
               deleteTodo={deleteTodo}

@@ -15,8 +15,8 @@ html, body, #root, .App {
 
 .swimlane {
   flex: 1; /* Make each swimlane take an equal portion of the container */
-  margin: 0 4px;
-  min-width: 250px; /* Set a minimum width to ensure readability */
+  margin: 0 8px; /* Reduced margin for narrower spacing between lanes */
+  min-width: 200px; /* Set a minimum width to ensure readability */
 }
 
 .todo-item {
@@ -31,10 +31,26 @@ html, body, #root, .App {
 
 .todo-text {
   flex-grow: 1;
+  overflow-wrap: break-word; /* Ensure long text wraps within the container */
 }
 
 .MuiContainer-root {
-  max-width: 80% !important; /* Adjust to a middle ground value */
-  width: 90%; /* Ensure it scales accordingly */
+  max-width: 85% !important; /* Adjust to a middle ground value */
+  width: 85%; /* Ensure it scales accordingly */
   margin: 0 auto; /* Center the container */
+}
+
+/* New input box styling at the bottom of each swimlane */
+.new-todo-input {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.new-todo-input input {
+  flex-grow: 1;
+}
+
+.new-todo-input .MuiTextField-root {
+  margin-right: 8px;
 }
