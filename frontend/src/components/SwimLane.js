@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Paper, Typography, Box, TextField, FormControlLabel, Checkbox, IconButton } from '@mui/material';
+import { Delete, DragIndicator } from '@mui/icons-material';
 import TodoModal from './TodoModal';
-import { DragIndicator } from '@mui/icons-material';
 
 const SwimLane = ({ lane, items, handleAddTodoInline, handleTodoCompletion, updateTodo, deleteTodo }) => {
   const [selectedTodo, setSelectedTodo] = useState(null);
@@ -37,7 +37,7 @@ const SwimLane = ({ lane, items, handleAddTodoInline, handleTodoCompletion, upda
 
   return (
     <Paper elevation={3} className="swimlane">
-      <Typography variant="h6" component="h3">
+      <Typography variant="h6" component="h3" className="swimlane-title">
         {lane}
       </Typography>
       <Droppable droppableId={lane}>
@@ -51,7 +51,6 @@ const SwimLane = ({ lane, items, handleAddTodoInline, handleTodoCompletion, upda
                     {...provided.draggableProps}
                     className="todo-item"
                     style={{ ...provided.draggableProps.style }}
-                    onDoubleClick={() => handleTodoDoubleClick(todo)}
                   >
                     <FormControlLabel
                       control={
@@ -65,18 +64,25 @@ const SwimLane = ({ lane, items, handleAddTodoInline, handleTodoCompletion, upda
                           variant="body1"
                           className="todo-text"
                           style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none' }}
+                          onDoubleClick={() => handleTodoDoubleClick(todo)}
                         >
                           {todo.title}
                         </Typography>
                       }
+                      onClick={(e) => e.stopPropagation()} // Stop the event from bubbling up to the Box
                     />
-                    <IconButton
-                      {...provided.dragHandleProps}
-                      aria-label="drag"
-                      style={{ cursor: 'grab' }}
-                    >
-                      <DragIndicator />
-                    </IconButton>
+                    <Box display="flex" alignItems="center">
+                      <IconButton onClick={() => deleteTodo(todo._id)}>
+                        <Delete />
+                      </IconButton>
+                      <IconButton
+                        {...provided.dragHandleProps}
+                        aria-label="drag"
+                        style={{ cursor: 'grab' }}
+                      >
+                        <DragIndicator />
+                      </IconButton>
+                    </Box>
                   </Box>
                 )}
               </Draggable>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, Box, Typography, TextField, Button, IconButton, Menu, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import EditableMarkdown from './EditableMarkdown';
 import axios from 'axios';
-import { ArrowBack, MoreVert } from '@mui/icons-material';
+import { ArrowBack, MoreVert, Delete } from '@mui/icons-material';
 
 const style = {
   position: 'absolute',
@@ -15,7 +15,7 @@ const style = {
   p: 4,
 };
 
-const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane }) => {
+const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, deleteTodo }) => {
   const [description, setDescription] = useState(todo.description);
   const [children, setChildren] = useState([]);
   const [newChildTitle, setNewChildTitle] = useState('');
@@ -119,6 +119,19 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane }) 
     }
   };
 
+  const handleDeleteTodo = async (id) => {
+    try {
+      await deleteTodo(id);
+      if (id === todo._id) {
+        handleClose();
+      } else {
+        setChildren(children.filter(c => c._id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+    }
+  };
+
   return (
     <Modal open={open} onClose={handleClose}>
       <Box sx={style}>
@@ -126,11 +139,16 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane }) 
           <Typography variant="h6" component="h2">
             {todo.title}
           </Typography>
-          {parentTodo && (
-            <IconButton onClick={handleCloseChildModal}>
-              <ArrowBack />
+          <Box>
+            <IconButton onClick={() => handleDeleteTodo(todo._id)}>
+              <Delete />
             </IconButton>
-          )}
+            {parentTodo && (
+              <IconButton onClick={handleCloseChildModal}>
+                <ArrowBack />
+              </IconButton>
+            )}
+          </Box>
         </Box>
         <EditableMarkdown text={description} onChange={setDescription} />
         <Button variant="contained" color="primary" onClick={handleSave}>
@@ -174,9 +192,14 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane }) 
                 }
                 onDoubleClick={() => handleChildDoubleClick(child)}
               />
-              <IconButton onClick={(event) => handleMenuClick(event, child)}>
-                <MoreVert />
-              </IconButton>
+              <Box display="flex" alignItems="center">
+                <IconButton onClick={() => handleDeleteTodo(child._id)}>
+                  <Delete />
+                </IconButton>
+                <IconButton onClick={(event) => handleMenuClick(event, child)}>
+                  <MoreVert />
+                </IconButton>
+              </Box>
             </Box>
           ))}
           <Menu
@@ -199,6 +222,7 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane }) 
             onSave={handleSaveChild}
             parentTodo={todo}
             updateLane={updateLane}
+            deleteTodo={deleteTodo}
           />
         )}
       </Box>
