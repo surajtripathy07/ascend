@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { TodoContext } from '../context/TodoContext';
 import { Box } from '@mui/material';
-import axios from 'axios';
 import SwimLane from './SwimLane';
 import '../css/SwimLanes.css';  // Import the new CSS file
+import { fetchTodos, addTodo, updateTodo, updateLanes, deleteTodo } from '../utils/api';
 
 const SwimLanes = () => {
   const { state, dispatch } = useContext(TodoContext);
 
   useEffect(() => {
-    const fetchTodos = async () => {
+    const loadTodos = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/todos');
-        dispatch({ type: 'SET_TODOS', payload: response.data });
+        const todos = await fetchTodos();
+        dispatch({ type: 'SET_TODOS', payload: todos });
       } catch (error) {
-        console.error('Error fetching todos:', error);
+        console.error('Error loading todos:', error);
       }
     };
 
-    fetchTodos();
+    loadTodos();
   }, [dispatch]);
 
   const onDragEnd = async (result) => {
@@ -48,31 +48,27 @@ const SwimLanes = () => {
     });
 
     try {
-      await axios.put('http://localhost:5000/update-lanes', { lanes: updatedLanes });
+      await updateLanes(updatedLanes);
     } catch (error) {
       console.error('Error updating lanes:', error);
     }
   };
 
-  const handleAddTodo = async (lane, newTodoItem) => {
+  const handleAddTodoInline = async (lane, title) => {
+    const newTodoItem = { title, description: '_(Add description here..)', type: lane === 'Today' ? 'todo' : 'goal', isCompleted: false, lane };
     try {
-      const response = await axios.post('http://localhost:5000/todos', newTodoItem);
-      dispatch({ type: 'ADD_TODO', payload: response.data });
+      const addedTodo = await addTodo(newTodoItem);
+      dispatch({ type: 'ADD_TODO', payload: addedTodo });
     } catch (error) {
       console.error('Error adding todo:', error);
     }
   };
 
-  const handleAddTodoInline = (lane, title) => {
-    const newTodoItem = { title, description: '_(Add description here..)', type: lane === 'Today' ? 'todo' : 'goal', isCompleted: false, lane };
-    handleAddTodo(lane, newTodoItem);
-  };
-
   const handleTodoCompletion = async (todo) => {
     const updatedTodo = { ...todo, isCompleted: !todo.isCompleted };
     try {
-      await axios.put(`http://localhost:5000/todos/${todo._id}`, updatedTodo);
-      dispatch({ type: 'SET_TODOS', payload: state.todos.map(t => (t._id === todo._id ? updatedTodo : t)) });
+      await updateTodo(updatedTodo);
+      dispatch({ type: 'SET_TODOS', payload: state.todos.map(t => (t._id === updatedTodo._id ? updatedTodo : t)) });
     } catch (error) {
       console.error('Error updating todo:', error);
     }
@@ -91,9 +87,9 @@ const SwimLanes = () => {
     dispatch({ type: 'SET_TODOS', payload: updatedTodos });
   };
 
-  const deleteTodo = async (id) => {
+  const handleDeleteTodo = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/todos/${id}`);
+      await deleteTodo(id);
       const updatedTodos = state.todos.filter(t => t._id !== id);
       dispatch({ type: 'SET_TODOS', payload: updatedTodos });
     } catch (error) {
@@ -112,7 +108,7 @@ const SwimLanes = () => {
               handleAddTodoInline={handleAddTodoInline} // Use handleAddTodoInline for inline addition
               handleTodoCompletion={handleTodoCompletion}
               updateTodo={updateLane}
-              deleteTodo={deleteTodo}
+              deleteTodo={handleDeleteTodo}
             />
           </Box>
         ))}
