@@ -1,0 +1,20 @@
+/* src/css/TodoItem.css */
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: lightgrey;
+  border-radius: 2px;
+  margin-bottom: 8px;
+  padding: 8px;
+}
+
+.todo-text {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.icon-button-group {
+  display: flex;
+  align-items: center;
+}
