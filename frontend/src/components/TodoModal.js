@@ -16,7 +16,7 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
   const fetchChildrenData = useCallback(async () => {
     try {
       const response = await fetchChildren(todo._id);
-      setChildren(response.data);
+      setChildren(response);
     } catch (error) {
       console.error('Error fetching children:', error);
     }
@@ -31,7 +31,7 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
   const handleSave = async () => {
     try {
       const updatedTodo = { ...todo, description };
-      await updateTodo(todo._id, updatedTodo);
+      await updateTodo(updatedTodo);
       onSave(updatedTodo);
     } catch (error) {
       console.error('Error updating todo:', error);
@@ -60,7 +60,7 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
   const handleChildCompletion = async (child) => {
     const updatedChild = { ...child, isCompleted: !child.isCompleted };
     try {
-      await updateTodo(child._id, updatedChild);
+      await updateTodo(updatedChild);
       setChildren(children.map(c => (c._id === updatedChild._id ? updatedChild : c)));
       updateLane(updatedChild); // Update the parent component's state
     } catch (error) {
@@ -78,16 +78,16 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
     setSelectedChild(null);
   };
 
-  const handleSaveChild = async (updatedChild) => {
-    try {
-      await updateTodo(updatedChild._id, updatedChild);
-      setChildren(children.map(c => (c._id === updatedChild._id ? updatedChild : c)));
-      setSelectedChild(updatedChild);
-      updateLane(updatedChild); // Update the parent component's state
-    } catch (error) {
-      console.error('Error saving child todo:', error);
-    }
-  };
+  // const handleSaveChild = async (updatedChild) => {
+  //   try {
+  //     await updateTodo(updatedChild);
+  //     setChildren(children.map(c => (c._id === updatedChild._id ? updatedChild : c)));
+  //     setSelectedChild(updatedChild);
+  //     updateLane(updatedChild); // Update the parent component's state
+  //   } catch (error) {
+  //     console.error('Error saving child todo:', error);
+  //   }
+  // };
 
   const handleMenuClick = (event, child) => {
     setAnchorEl(event.currentTarget);
@@ -103,7 +103,7 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
     if (!childForMenu) return;
     try {
       const updatedChild = { ...childForMenu, lane, type: lane === 'Today' ? 'todo' : 'goal' };
-      await updateTodo(childForMenu._id, updatedChild);
+      await updateTodo(updatedChild);
       setChildren(children.map(c => (c._id === updatedChild._id ? updatedChild : c)));
       handleMenuClose();
       updateLane(updatedChild); // Update the parent component's state
@@ -131,9 +131,6 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
         <TodoModalContent
           todo={todo}
           handleSave={handleSave}
-          handleAddChild={handleAddChild}
-          handleChildCompletion={handleChildCompletion}
-          handleChildDoubleClick={handleChildDoubleClick}
           handleMenuClick={handleMenuClick}
           handleMenuClose={handleMenuClose}
           handleMoveToLane={handleMoveToLane}
@@ -141,6 +138,9 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
           parentTodo={parentTodo}
           anchorEl={anchorEl}
           children={children}
+          handleAddChild={handleAddChild}
+          handleChildCompletion={handleChildCompletion}
+          handleChildDoubleClick={handleChildDoubleClick}
           setNewChildTitle={setNewChildTitle}
           newChildTitle={newChildTitle}
           selectedChild={selectedChild}

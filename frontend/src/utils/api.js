@@ -54,9 +54,10 @@ export const deleteTodo = async (id) => {
 
 export const fetchChildren = async (parentId) => {
   try {
-    await api.get(`/todos/children/${parentId}`);
+    const response = await api.get(`/todos/children/${parentId}`);
+    return response.data;
   } catch (error) {
-    console.error('Error fetchChildren todo:', error);
+    console.error('Error fetching children:', error);
     throw error;
   }
 };

@@ -6,12 +6,12 @@ const EditableMarkdown = ({ text, onChange }) => {
   const [value, setValue] = useState(text);
 
   useEffect(() => {
-    setValue(text);
+    setValue(text); // Ensure value is updated when text prop changes
   }, [text]);
 
   const handleBlur = () => {
     setIsEditing(false);
-    onChange(value);
+    onChange(value); // Save the value when exiting edit mode
   };
 
   return (
@@ -23,14 +23,13 @@ const EditableMarkdown = ({ text, onChange }) => {
           onBlur={handleBlur}
           autoFocus
           rows="10"
-          style={{ width: '100%' }}
+          style={{ width: '100%', padding: '10px', fontSize: '16px', lineHeight: '1.5' }}
         />
       ) : (
-        <ReactMarkdown>{text}</ReactMarkdown>
+        <ReactMarkdown>{value || 'Click to edit...'}</ReactMarkdown>
       )}
     </div>
   );
 };
 
 export default EditableMarkdown;
-
