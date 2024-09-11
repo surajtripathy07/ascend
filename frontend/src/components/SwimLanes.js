@@ -67,6 +67,11 @@ const SwimLanes = () => {
   const handleTodoCompletion = async (todo) => {
     const updatedTodo = { ...todo, isCompleted: !todo.isCompleted };
     try {
+      if (updatedTodo.isCompleted) {
+        updatedTodo.completedAt = new Date();
+      } else {
+        updatedTodo.completedAt = null;
+      }
       await updateTodo(updatedTodo);
       dispatch({ type: 'SET_TODOS', payload: state.todos.map(t => (t._id === updatedTodo._id ? updatedTodo : t)) });
     } catch (error) {

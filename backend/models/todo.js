@@ -11,6 +11,8 @@ const TodoSchema = new mongoose.Schema({
   lane: String,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  completedAt: Date,
+  isDeleted: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model('Todo', TodoSchema);
