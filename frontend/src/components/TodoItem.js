@@ -8,27 +8,24 @@ const TodoItem = ({ todo, index, handleTodoCompletion, handleTodoDoubleClick, de
   const clickTimeoutRef = useRef(null);  // Ref to track single click timeout
 
   const handleClick = (e) => {
-    e.stopPropagation();  // Prevent event bubbling to avoid triggering double-clicks
+    e.stopPropagation();
 
-    // Clear any existing timeout
     if (clickTimeoutRef.current) {
       clearTimeout(clickTimeoutRef.current);
       clickTimeoutRef.current = null;
     }
 
-    // Set a timeout to trigger single click action
     clickTimeoutRef.current = setTimeout(() => {
-      handleTodoCompletion(todo);  // Trigger checkbox toggle action
-    }, 200);  // Set a delay to differentiate single vs double click
+      handleTodoCompletion(todo);
+    }, 200);
   };
 
   const handleDoubleClick = () => {
-    // Clear the single-click timeout if double-click is detected
     if (clickTimeoutRef.current) {
       clearTimeout(clickTimeoutRef.current);
       clickTimeoutRef.current = null;
     }
-    handleTodoDoubleClick(todo);  // Trigger double-click action (e.g., open modal)
+    handleTodoDoubleClick(todo);
   };
 
   return (
