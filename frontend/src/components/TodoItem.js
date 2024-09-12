@@ -1,52 +1,80 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { Box, Typography, FormControlLabel, Checkbox, IconButton } from '@mui/material';
 import { Delete, DragIndicator } from '@mui/icons-material';
 import '../css/TodoItem.css';  // Import the scoped CSS file
 
-const TodoItem = ({ todo, index, handleTodoCompletion, handleTodoDoubleClick, deleteTodo, provided }) => (
-  <Draggable key={todo._id} draggableId={todo._id} index={index}>
-    {(provided, snapshot) => (
-      <Box
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        className="todo-item"
-        style={{ ...provided.draggableProps.style }}
-      >
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={todo.isCompleted}
-              onChange={() => handleTodoCompletion(todo)}
-            />
-          }
-          label={
-            <Typography
-              variant="body1"
-              className="todo-text"
-              style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none' }}
-              onDoubleClick={() => handleTodoDoubleClick(todo)}
+const TodoItem = ({ todo, index, handleTodoCompletion, handleTodoDoubleClick, deleteTodo }) => {
+  const clickTimeoutRef = useRef(null);  // Ref to track single click timeout
+
+  const handleClick = (e) => {
+    e.stopPropagation();  // Prevent event bubbling to avoid triggering double-clicks
+
+    // Clear any existing timeout
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+    }
+
+    // Set a timeout to trigger single click action
+    clickTimeoutRef.current = setTimeout(() => {
+      handleTodoCompletion(todo);  // Trigger checkbox toggle action
+    }, 200);  // Set a delay to differentiate single vs double click
+  };
+
+  const handleDoubleClick = () => {
+    // Clear the single-click timeout if double-click is detected
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+    }
+    handleTodoDoubleClick(todo);  // Trigger double-click action (e.g., open modal)
+  };
+
+  return (
+    <Draggable key={todo._id} draggableId={todo._id} index={index}>
+      {(provided) => (
+        <Box
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          className="todo-item"
+          style={{ ...provided.draggableProps.style }}
+          onDoubleClick={handleDoubleClick}  // Trigger double-click action
+        >
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={todo.isCompleted}
+                onClick={handleClick}  // Handle single click for checkbox
+              />
+            }
+            label={
+              <Typography
+                variant="body1"
+                className="todo-text"
+                style={{ textDecoration: todo.isCompleted ? 'line-through' : 'none' }}
+                onDoubleClick={handleDoubleClick}  // Handle double-click on text
+              >
+                {todo.title}
+              </Typography>
+            }
+          />
+          <Box display="flex" alignItems="center">
+            <IconButton onClick={() => deleteTodo(todo._id)}>
+              <Delete />
+            </IconButton>
+            <IconButton
+              {...provided.dragHandleProps}
+              aria-label="drag"
+              style={{ cursor: 'grab' }}
             >
-              {todo.title}
-            </Typography>
-          }
-          onClick={(e) => e.stopPropagation()} // Stop the event from bubbling up to the Box
-        />
-        <Box display="flex" alignItems="center">
-          <IconButton onClick={() => deleteTodo(todo._id)}>
-            <Delete />
-          </IconButton>
-          <IconButton
-            {...provided.dragHandleProps}
-            aria-label="drag"
-            style={{ cursor: 'grab' }}
-          >
-            <DragIndicator />
-          </IconButton>
+              <DragIndicator />
+            </IconButton>
+          </Box>
         </Box>
-      </Box>
-    )}
-  </Draggable>
-);
+      )}
+    </Draggable>
+  );
+};
 
 export default TodoItem;

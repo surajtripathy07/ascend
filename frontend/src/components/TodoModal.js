@@ -41,6 +41,11 @@ const TodoModal = ({ open, handleClose, todo, handleSave, updateLane, deleteTodo
   const handleChildCompletion = async (child) => {
     const updatedChild = { ...child, isCompleted: !child.isCompleted };
     try {
+      if (updatedChild.isCompleted) {
+        updatedChild.completedAt = new Date();
+      } else {
+        updatedChild.completedAt = null;
+      }
       await updateTodo(updatedChild);
       setChildren(children.map(c => (c._id === updatedChild._id ? updatedChild : c)));
       updateLane(updatedChild); // Update the parent component's state

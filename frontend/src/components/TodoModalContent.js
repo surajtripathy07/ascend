@@ -108,7 +108,7 @@ const TodoModalContent = ({
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={!!child.isCompleted}  // Safeguard for missing property
+                      checked={child.isCompleted}  // Safeguard for missing property
                       onChange={() => handleChildCompletion(child)}
                     />
                   }
