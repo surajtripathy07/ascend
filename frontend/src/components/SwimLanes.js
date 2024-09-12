@@ -55,7 +55,7 @@ const SwimLanes = () => {
   };
 
   const handleAddTodoInline = async (lane, title) => {
-    const newTodoItem = { title, description: '_(Add description here..)', type: lane === 'Today' ? 'todo' : 'goal', isCompleted: false, lane };
+    const newTodoItem = { title, description: '', type: lane === 'Today' ? 'todo' : 'goal', isCompleted: false, lane };
     try {
       const addedTodo = await addTodo(newTodoItem);
       dispatch({ type: 'ADD_TODO', payload: addedTodo });
