@@ -6,12 +6,16 @@ const EditableMarkdown = ({ text, onChange }) => {
   const [value, setValue] = useState(text);
 
   useEffect(() => {
-    setValue(text); // Ensure value is updated when text prop changes
+    setValue(text);
   }, [text]);
 
   const handleBlur = () => {
     setIsEditing(false);
-    onChange(value); // Save the value when exiting edit mode
+    onChange(value);
+  };
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
   };
 
   return (
@@ -19,8 +23,8 @@ const EditableMarkdown = ({ text, onChange }) => {
       {isEditing ? (
         <textarea
           value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onBlur={handleBlur}
+          onChange={handleChange}  // Update both local and parent state on each keystroke
+          onBlur={handleBlur}  // Mark editing as done on blur
           autoFocus
           rows="10"
           style={{ width: '100%', padding: '10px', fontSize: '16px', lineHeight: '1.5' }}

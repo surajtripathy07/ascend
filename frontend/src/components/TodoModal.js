@@ -28,9 +28,8 @@ const TodoModal = ({ open, handleClose, todo, onSave, updateLane, deleteTodo, pa
     }
   }, [open, fetchChildrenData]);
 
-  const handleSave = async () => {
+  const handleSave = async (updatedTodo) => {
     try {
-      const updatedTodo = { ...todo, description };
       await updateTodo(updatedTodo);
       onSave(updatedTodo); // Ensure the updated todo is sent back to the parent component
     } catch (error) {

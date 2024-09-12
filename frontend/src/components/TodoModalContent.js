@@ -10,7 +10,7 @@ const TodoModalContent = ({
   handleSave,
   handleDeleteTodo,
   handleAddChild,
-  children = [], // Default to an empty array if undefined
+  children = [],
   setNewChildTitle,
   newChildTitle,
   handleMenuClick,
