@@ -4,7 +4,7 @@ import TodoModalContent from './TodoModalContent';
 import { fetchChildren, addTodo, updateTodo, deleteTodo as apiDeleteTodo } from '../utils/api';
 import '../css/TodoModal.css';  // Import the scoped CSS file
 
-const TodoModal = ({ open, handleClose, todo, onSave, updateLane, deleteTodo, parentTodo }) => {
+const TodoModal = ({ open, handleClose, todo, handleSave, updateLane, deleteTodo, parentTodo }) => {
   const [description, setDescription] = useState(todo.description);
   const [children, setChildren] = useState([]);
   const [newChildTitle, setNewChildTitle] = useState('');
@@ -27,15 +27,6 @@ const TodoModal = ({ open, handleClose, todo, onSave, updateLane, deleteTodo, pa
       fetchChildrenData();
     }
   }, [open, fetchChildrenData]);
-
-  const handleSave = async (updatedTodo) => {
-    try {
-      await updateTodo(updatedTodo);
-      onSave(updatedTodo); // Ensure the updated todo is sent back to the parent component
-    } catch (error) {
-      console.error('Error updating todo:', error);
-    }
-  };
 
   const handleMenuClick = (event, child) => {
     setAnchorEl(event.currentTarget);

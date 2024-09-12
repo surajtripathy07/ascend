@@ -63,7 +63,7 @@ const TodoModalContent = ({
       <EditableMarkdown text={description} onChange={setDescription} />
 
       {/* Save Button */}
-      <Button variant="contained" color="primary" onClick={() => handleSave({ ...todo, description })}>
+      <Button variant="contained" color="primary" onClick={() => handleSave({ ...todo, description }, false)}>
         Save
       </Button>
 
@@ -153,7 +153,7 @@ const TodoModalContent = ({
           open={childModalOpen}
           handleClose={handleCloseChildModal}
           todo={selectedChild}
-          onSave={handleSave}
+          handleSave={handleSave}
           updateLane={updateLane}
           deleteTodo={handleDeleteTodo}
           parentTodo={todo}
