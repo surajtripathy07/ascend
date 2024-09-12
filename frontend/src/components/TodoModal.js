@@ -4,14 +4,14 @@ import TodoModalContent from './TodoModalContent';
 import { fetchChildren, addTodo, updateTodo, deleteTodo as apiDeleteTodo } from '../utils/api';
 import '../css/TodoModal.css';  // Import the scoped CSS file
 
-const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, deleteTodo }) => {
+const TodoModal = ({ open, handleClose, todo, onSave, updateLane, deleteTodo, parentTodo }) => {
   const [description, setDescription] = useState(todo.description);
   const [children, setChildren] = useState([]);
   const [newChildTitle, setNewChildTitle] = useState('');
+  const [childForMenu, setChildForMenu] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [selectedChild, setSelectedChild] = useState(null);
   const [childModalOpen, setChildModalOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [childForMenu, setChildForMenu] = useState(null);
 
   const fetchChildrenData = useCallback(async () => {
     try {
@@ -32,29 +32,20 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
     try {
       const updatedTodo = { ...todo, description };
       await updateTodo(updatedTodo);
-      onSave(updatedTodo);
+      onSave(updatedTodo); // Ensure the updated todo is sent back to the parent component
     } catch (error) {
       console.error('Error updating todo:', error);
     }
   };
 
-  const handleAddChild = async () => {
-    if (!newChildTitle.trim()) return;
-    try {
-      const newChildTodo = {
-        title: newChildTitle,
-        description: '_(Add description here..)',
-        isCompleted: false,
-        parentId: todo._id,
-        type: 'todo'
-      };
-      const response = await addTodo(newChildTodo);
-      setChildren([...children, response.data]);
-      setNewChildTitle('');
-      updateLane(response.data); // Update the parent component's state
-    } catch (error) {
-      console.error('Error adding child todo:', error);
-    }
+  const handleMenuClick = (event, child) => {
+    setAnchorEl(event.currentTarget);
+    setChildForMenu(child);  // Set the selected child for the menu action
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setChildForMenu(null);
   };
 
   const handleChildCompletion = async (child) => {
@@ -78,27 +69,6 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
     setSelectedChild(null);
   };
 
-  // const handleSaveChild = async (updatedChild) => {
-  //   try {
-  //     await updateTodo(updatedChild);
-  //     setChildren(children.map(c => (c._id === updatedChild._id ? updatedChild : c)));
-  //     setSelectedChild(updatedChild);
-  //     updateLane(updatedChild); // Update the parent component's state
-  //   } catch (error) {
-  //     console.error('Error saving child todo:', error);
-  //   }
-  // };
-
-  const handleMenuClick = (event, child) => {
-    setAnchorEl(event.currentTarget);
-    setChildForMenu(child);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setChildForMenu(null);
-  };
-
   const handleMoveToLane = async (lane) => {
     if (!childForMenu) return;
     try {
@@ -112,16 +82,28 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
     }
   };
 
-  const handleDeleteTodo = async (id) => {
+  const handleAddChild = async () => {
+    if (!newChildTitle.trim()) return;
     try {
-      await apiDeleteTodo(id);
-      if (id === todo._id) {
-        handleClose();
+      const newChildTodo = {
+        title: newChildTitle,
+        description: '',
+        isCompleted: false,
+        parentId: todo._id,
+        type: 'todo'
+      };
+      const response = await addTodo(newChildTodo);
+
+      // Make sure the response contains the correct child todo
+      if (response && response.data) {
+        setChildren([...children, response.data]);  // Add new child to state
+        setNewChildTitle('');
+        updateLane(response.data);  // Update the parent component's state
       } else {
-        setChildren(children.filter(c => c._id !== id));
+        console.error('Error: Add child response is invalid');
       }
     } catch (error) {
-      console.error('Error deleting todo:', error);
+      console.error('Error adding child todo:', error);
     }
   };
 
@@ -131,23 +113,23 @@ const TodoModal = ({ open, handleClose, todo, onSave, parentTodo, updateLane, de
         <TodoModalContent
           todo={todo}
           handleSave={handleSave}
-          handleMenuClick={handleMenuClick}
-          handleMenuClose={handleMenuClose}
-          handleMoveToLane={handleMoveToLane}
-          handleDeleteTodo={handleDeleteTodo}
-          parentTodo={parentTodo}
-          anchorEl={anchorEl}
-          children={children}
+          handleDeleteTodo={deleteTodo}
           handleAddChild={handleAddChild}
-          handleChildCompletion={handleChildCompletion}
-          handleChildDoubleClick={handleChildDoubleClick}
+          children={children}
           setNewChildTitle={setNewChildTitle}
           newChildTitle={newChildTitle}
+          handleMenuClick={handleMenuClick}
+          anchorEl={anchorEl}
+          handleMenuClose={handleMenuClose}
+          handleMoveToLane={handleMoveToLane}
+          handleChildCompletion={handleChildCompletion}
+          handleChildDoubleClick={handleChildDoubleClick}
+          handleCloseChildModal={handleCloseChildModal}
+          parentTodo={parentTodo}
           selectedChild={selectedChild}
           setSelectedChild={setSelectedChild}
           childModalOpen={childModalOpen}
-          setChildModalOpen={setChildModalOpen}
-          handleCloseChildModal={handleCloseChildModal}
+          updateLane={updateLane}
         />
       </Box>
     </Modal>

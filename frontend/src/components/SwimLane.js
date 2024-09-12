@@ -21,8 +21,10 @@ const SwimLane = ({ lane, items, handleAddTodoInline, handleTodoCompletion, upda
   };
 
   const handleSave = (updatedTodo) => {
-    updateTodo(updatedTodo);
-    setSelectedTodo(updatedTodo); // Ensure the modal shows the updated description
+    // Update todo via the updateTodo function passed as a prop
+    updateTodo(updatedTodo); // Make sure this function correctly updates the todo state in the parent component
+    setSelectedTodo(null);  // Close the modal
+    setModalOpen(false);    // Ensure modal closes after saving
   };
 
   const handleNewTodoChange = (e) => {
@@ -31,7 +33,7 @@ const SwimLane = ({ lane, items, handleAddTodoInline, handleTodoCompletion, upda
 
   const handleNewTodoKeyPress = (e) => {
     if (e.key === 'Enter' && newTodo.trim()) {
-      handleAddTodoInline(lane, newTodo);
+      handleAddTodoInline(lane, newTodo); // Ensure that the parent state is updated after adding a new todo
       setNewTodo('');
     }
   };
@@ -74,9 +76,9 @@ const SwimLane = ({ lane, items, handleAddTodoInline, handleTodoCompletion, upda
           open={modalOpen}
           handleClose={handleCloseModal}
           todo={selectedTodo}
-          onSave={handleSave}
-          updateLane={updateTodo} // Pass the updateLane function
-          deleteTodo={deleteTodo}
+          onSave={handleSave}  // Ensure the updated todo is saved back
+          updateLane={updateTodo}  // Pass updateLane to the modal to update children todos too
+          deleteTodo={deleteTodo}  // Ensure todos can be deleted from within the modal
         />
       )}
     </Paper>

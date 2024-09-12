@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, IconButton, Menu, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import EditableMarkdown from './EditableMarkdown';
+import TodoModal from './TodoModal';
 import { ArrowBack, MoreVert, Delete } from '@mui/icons-material';
 import '../css/TodoModal.css';  // Import the scoped CSS file
 
 const TodoModalContent = ({
   todo,
   handleSave,
-  handleAddChild,
-  handleChildCompletion,
-  handleChildDoubleClick,
-  handleMenuClick,
-  handleMenuClose,
-  handleMoveToLane,
   handleDeleteTodo,
-  parentTodo,
-  anchorEl,
+  handleAddChild,
   children = [], // Default to an empty array if undefined
   setNewChildTitle,
   newChildTitle,
+  handleMenuClick,
+  anchorEl,
+  handleMenuClose,
+  handleMoveToLane,
+  handleChildCompletion,
+  handleChildDoubleClick,
+  handleCloseChildModal,
+  parentTodo,
   selectedChild,
   setSelectedChild,
   childModalOpen,
   setChildModalOpen,
-  handleCloseChildModal,
-  updateLane, // Added missing prop
-  handleSaveChild, // Added missing prop
+  updateLane,
 }) => {
   const [description, setDescription] = useState(todo.description);
 
@@ -92,7 +92,7 @@ const TodoModalContent = ({
           onClick={() => {
             if (newChildTitle.trim()) {
               handleAddChild(newChildTitle);
-              setNewChildTitle(''); // Clear the input field
+              setNewChildTitle('');  // Clear the input field
             }
           }}
           fullWidth
@@ -103,33 +103,35 @@ const TodoModalContent = ({
         {/* List of Child Todos */}
         {children.length > 0 ? (
           children.map((child) => (
-            <Box key={child._id} className="child-todo">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={child.isCompleted || false} // Safeguard for missing property
-                    onChange={() => handleChildCompletion(child)}
-                  />
-                }
-                label={
-                  <Typography
-                    variant="body1"
-                    style={{ textDecoration: child.isCompleted ? 'line-through' : 'none' }}
-                    onDoubleClick={() => handleChildDoubleClick(child)}
-                  >
-                    {child.title}
-                  </Typography>
-                }
-              />
-              <Box display="flex" alignItems="center">
-                <IconButton onClick={() => handleDeleteTodo(child._id)}>
-                  <Delete />
-                </IconButton>
-                <IconButton onClick={(event) => handleMenuClick(event, child)}>
-                  <MoreVert />
-                </IconButton>
+            child && (  // Ensure the child object is not undefined
+              <Box key={child._id} className="child-todo">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={!!child.isCompleted}  // Safeguard for missing property
+                      onChange={() => handleChildCompletion(child)}
+                    />
+                  }
+                  label={
+                    <Typography
+                      variant="body1"
+                      style={{ textDecoration: child.isCompleted ? 'line-through' : 'none' }}
+                      onDoubleClick={() => handleChildDoubleClick(child)}
+                    >
+                      {child.title}
+                    </Typography>
+                  }
+                />
+                <Box display="flex" alignItems="center">
+                  <IconButton onClick={() => handleDeleteTodo(child._id)}>
+                    <Delete />
+                  </IconButton>
+                  <IconButton onClick={(event) => handleMenuClick(event, child)}>
+                    <MoreVert />
+                  </IconButton>
+                </Box>
               </Box>
-            </Box>
+            )
           ))
         ) : (
           <Typography>No children added yet.</Typography>
@@ -147,14 +149,14 @@ const TodoModalContent = ({
 
       {/* Child Modal for Selected Child */}
       {selectedChild && (
-        <TodoModalContent
+        <TodoModal
           open={childModalOpen}
           handleClose={handleCloseChildModal}
           todo={selectedChild}
-          onSave={handleSaveChild}
-          parentTodo={todo}
+          onSave={handleSave}
           updateLane={updateLane}
           deleteTodo={handleDeleteTodo}
+          parentTodo={todo}
         />
       )}
     </Box>
